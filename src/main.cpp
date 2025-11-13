@@ -1,5 +1,6 @@
 ﻿#include "mesh/mesh.h"
 #include "mesh/transform.h"
+#include "obj_file.h"
 
 #include <iostream>
 #include <iomanip>
@@ -11,9 +12,9 @@
 
 namespace mesh_app {
 
-    using mesh::Matrix4x4;
+    using linear_algebra::Matrix4x4;
     using mesh::Mesh;
-    using mesh::Vector3;
+    using linear_algebra::Vector3;
 
     void PrintUsage() {
         std::cout << "Usage: mesh_transform_app <input.obj> <output.obj> [options]\n\n"
@@ -38,7 +39,7 @@ namespace mesh_app {
     // degrees → radians
     inline double DegToRad(double deg) { return deg * M_PI / 180.0; }
 
-    void PrintMatrix(std::ostream& os, const mesh::Matrix4x4& m) {
+    void PrintMatrix(std::ostream& os, const linear_algebra::Matrix4x4& m) {
         auto data = m.data();
         os << std::fixed << std::setprecision(4);
         for (int r = 0; r < 4; ++r) {
@@ -65,6 +66,8 @@ namespace mesh_app {
 int main(int argc, char** argv) {
     using namespace mesh_app;
     using namespace mesh;
+
+    file::CObjFile objfile;
 
     if (argc < 3) {
         PrintUsage();
@@ -105,18 +108,18 @@ int main(int argc, char** argv) {
     log_file << "Output file: " << output_path << "\n";
     log_file << "Verbose: " << (verbose ? "true" : "false") << "\n\n";
 
-    Mesh mesh;
-    if (!mesh.load_from_simple_obj(input_path)) {
+    std::shared_ptr<file::CObjFile> obj_file = std::make_shared<file::CObjFile>();
+    if (!obj_file->read(input_path)) {
         std::cerr << "❌ Error: failed to load input file: " << input_path << "\n";
         log_file << "❌ Failed to load input mesh\n";
         return 1;
     }
 
-    os << "✅ Loaded mesh with " << mesh.vertices().size()
+    os << "✅ Loaded mesh with " << obj_file->mesh()->vertices().size()
         << " vertices from " << input_path << "\n";
-    log_file << "Loaded mesh with " << mesh.vertices().size() << " vertices\n";
+    log_file << "Loaded mesh with " << obj_file->mesh()->vertices().size() << " vertices\n";
 
-    mesh::Matrix4x4 transform;
+    linear_algebra::Matrix4x4 transform;
     os << "\n=== Begin Transformation Sequence ===\n";
     log_file << "\n=== Begin Transformation Sequence ===\n";
 
@@ -136,7 +139,7 @@ int main(int argc, char** argv) {
                 double tz = std::stod(argv[++i]);
                 os << "\n[Transform] Translate (" << tx << ", " << ty << ", " << tz << ")\n";
                 log_file << "\n[Transform] Translate (" << tx << ", " << ty << ", " << tz << ")\n";
-                transform = mesh::Matrix4x4::Translate(tx, ty, tz) * transform;
+                transform = linear_algebra::Matrix4x4::Translate(tx, ty, tz) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }  
@@ -147,7 +150,7 @@ int main(int argc, char** argv) {
                 double s = std::stod(argv[++i]);
                 os << "\n[Transform] Scale (" << s << ")\n";
                 log_file << "\n[Transform] Scale (" << s << ")\n";
-                transform = mesh::Matrix4x4::Scale(s) * transform;
+                transform = linear_algebra::Matrix4x4::Scale(s) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -160,7 +163,7 @@ int main(int argc, char** argv) {
                 double sz = std::stod(argv[++i]);
                 os << "\n[Transform] ScaleNonUniform (" << sx << ", " << sy << ", " << sz << ")\n";
                 log_file << "\n[Transform] ScaleNonUniform (" << sx << ", " << sy << ", " << sz << ")\n";
-                transform = mesh::Matrix4x4::ScaleNonUniform(sx, sy, sz) * transform;
+                transform = linear_algebra::Matrix4x4::ScaleNonUniform(sx, sy, sz) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -171,7 +174,7 @@ int main(int argc, char** argv) {
                 double angle = DegToRad(std::stod(argv[++i]));
                 os << "\n[Transform] RotateX (" << angle << " rad)\n";
                 log_file << "\n[Transform] RotateX (" << angle << " rad)\n";
-                transform = mesh::Matrix4x4::RotateX(angle) * transform;
+                transform = linear_algebra::Matrix4x4::RotateX(angle) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -182,7 +185,7 @@ int main(int argc, char** argv) {
                 double angle = DegToRad(std::stod(argv[++i]));
                 os << "\n[Transform] RotateY (" << angle << " rad)\n";
                 log_file << "\n[Transform] RotateY (" << angle << " rad)\n";
-                transform = mesh::Matrix4x4::RotateY(angle) * transform;
+                transform = linear_algebra::Matrix4x4::RotateY(angle) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -193,7 +196,7 @@ int main(int argc, char** argv) {
                 double angle = DegToRad(std::stod(argv[++i]));
                 os << "\n[Transform] RotateZ (" << angle << " rad)\n";
                 log_file << "\n[Transform] RotateZ (" << angle << " rad)\n";
-                transform = mesh::Matrix4x4::RotateZ(angle) * transform;
+                transform = linear_algebra::Matrix4x4::RotateZ(angle) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -209,7 +212,7 @@ int main(int argc, char** argv) {
                     << "), angle=" << angle << " rad\n";
                 log_file << "\n[Transform] RotateAxis axis=(" << ax << ", " << ay << ", " << az
                     << "), angle=" << angle << " rad\n";
-                transform = mesh::Matrix4x4::RotateAroundAxis(Vector3(ax, ay, az), angle) * transform;
+                transform = linear_algebra::Matrix4x4::RotateAroundAxis(linear_algebra::Vector3(ax, ay, az), angle) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -229,7 +232,7 @@ int main(int argc, char** argv) {
                 log_file << "\n[Transform] Shear ("
                     << sxy << ", " << sxz << ", " << syx << ", "
                     << syz << ", " << szx << ", " << szy << ")\n";
-                transform = mesh::Matrix4x4::Shear(sxy, sxz, syx, syz, szx, szy) * transform;
+                transform = linear_algebra::Matrix4x4::Shear(sxy, sxz, syx, syz, szx, szy) * transform;
                 if (verbose) {
                     PrintMatrix(os, transform);
                 }
@@ -254,9 +257,9 @@ int main(int argc, char** argv) {
     if (verbose) PrintMatrix(os, transform);
     PrintMatrix(log_file, transform);
 
-    mesh.apply_transform(transform);
+    obj_file->mesh()->apply_transform(transform);
 
-    if (!mesh.save_as_simple_obj(output_path)) {
+    if (!obj_file->write(output_path)) {
         std::cerr << "❌ Error: failed to save output file: " << output_path << "\n";
         log_file << "❌ Failed to save output mesh\n";
         return 1;

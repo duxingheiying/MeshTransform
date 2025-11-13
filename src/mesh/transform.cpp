@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace mesh {
+namespace linear_algebra {
 
     Matrix4x4::Matrix4x4() {
         data_.fill(0.0);

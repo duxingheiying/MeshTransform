@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace mesh {
+namespace linear_algebra {
 
     // 三维向量
     struct Vector3 {
@@ -39,7 +39,7 @@ namespace mesh {
     // 4x4 矩阵
     class Matrix4x4 {
     public:
-        Matrix4x4();
+        explicit Matrix4x4();
 
         // 单位矩阵
         static Matrix4x4 Identity();

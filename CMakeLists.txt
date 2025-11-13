@@ -18,11 +18,13 @@ set(MESH_DIR ${SRC_DIR}/mesh)
 
 set(SOURCES
     ${SRC_DIR}/main.cpp
+    ${SRC_DIR}/obj_file.cpp
     ${MESH_DIR}/mesh.cpp
     ${MESH_DIR}/transform.cpp
 )
 
 set(HEADERS
+    ${SRC_DIR}/obj_file.h
     ${MESH_DIR}/mesh.h
     ${MESH_DIR}/transform.h
 )

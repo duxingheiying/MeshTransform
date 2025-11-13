@@ -6,6 +6,37 @@
 #include <iostream>
 
 namespace linear_algebra {
+    // 三维向量
+    struct Vector2 {
+        double x, y;
+		Vector2() : x(0), y(0) {}
+        Vector2(double _x, double _y) : x(_x), y(_y) {}
+
+        Vector2 operator+(const Vector2& rhs) const {
+            return { x + rhs.x, y + rhs.y};
+        }
+
+        Vector2 operator-(const Vector2& rhs) const {
+			return { x - rhs.x, y - rhs.y };
+        }
+
+        // 二维向量放缩
+        Vector2 operator*(double s) const { return { x * s, y * s }; }
+
+        // 二维向量点成
+        double dot(const Vector3& rhs) const { return x * rhs.x + y * rhs.y; }
+
+        // 二维向量叉乘
+        double cross(const Vector2& rhs) const {
+            return { this->x * rhs.y - this->y * rhs.x};
+        }
+
+        Vector2 normalized() const {
+            double len = std::sqrt(x * x + y * y);
+            if (len < 1e-9) return { 0, 0};
+            return { x / len, y / len };
+        }
+    };
 
     // 三维向量
     struct Vector3 {

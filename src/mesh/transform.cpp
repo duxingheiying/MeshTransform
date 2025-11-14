@@ -26,10 +26,10 @@ namespace linear_algebra {
     }
 
     Vector3 Matrix4x4::operator*(const Vector3& v) const {
-        double x = data_[0] * v.x + data_[1] * v.y + data_[2] * v.z + data_[3];
-        double y = data_[4] * v.x + data_[5] * v.y + data_[6] * v.z + data_[7];
-        double z = data_[8] * v.x + data_[9] * v.y + data_[10] * v.z + data_[11];
-        double w = data_[12] * v.x + data_[13] * v.y + data_[14] * v.z + data_[15];
+        double x = data_[0] * v.x_ + data_[1] * v.y_ + data_[2] * v.z_ + data_[3];
+        double y = data_[4] * v.x_ + data_[5] * v.y_ + data_[6] * v.z_ + data_[7];
+        double z = data_[8] * v.x_ + data_[9] * v.y_ + data_[10] * v.z_ + data_[11];
+        double w = data_[12] * v.x_ + data_[13] * v.y_ + data_[14] * v.z_ + data_[15];
         if (std::abs(w) < 1e-9) w = 1.0;
         return { x / w, y / w, z / w };
     }
@@ -105,9 +105,9 @@ namespace linear_algebra {
 
         Matrix4x4 m;
         m.data_ = {
-            t * n.x * n.x + c, t * n.x * n.y - s * n.z, t * n.x * n.z + s * n.y, 0,
-            t * n.x * n.y + s * n.z, t * n.y * n.y + c, t * n.y * n.z - s * n.x, 0,
-            t * n.x * n.z - s * n.y, t * n.y * n.z + s * n.x, t * n.z * n.z + c, 0,
+            t * n.x_ * n.x_ + c, t * n.x_ * n.y_ - s * n.z_, t * n.x_ * n.z_ + s * n.y_, 0,
+            t * n.x_ * n.y_ + s * n.z_, t * n.y_ * n.y_ + c, t * n.y_ * n.z_ - s * n.x_, 0,
+            t * n.x_ * n.z_ - s * n.y_, t * n.y_ * n.z_ + s * n.x_, t * n.z_ * n.z_ + c, 0,
             0, 0, 0, 1 };
         return m;
     }

@@ -16,8 +16,8 @@ namespace mesh_app {
     using mesh::Mesh;
     using linear_algebra::Vector3;
 
-    void PrintUsage() {
-        std::cout << "Usage: mesh_transform_app <input.obj> <output.obj> [options]\n\n"
+    void PrintUsage(const std::string& excutable_name) {
+        std::cout << "Usage: "<< excutable_name<<" <input.obj> <output.obj> [options]\n\n"
             << "Options (order matters):\n"
             << "  --translate tx ty tz\n"
             << "  --scale s\n"
@@ -31,7 +31,7 @@ namespace mesh_app {
             << "  --verbose [0|1]    print transformations to stdout (default=1)\n"
             << "  --help\n\n"
             << "Example:\n"
-            << "  mesh_transform_app input.obj output.obj "
+            << excutable_name<<" input.obj output.obj "
             "--translate 1 2 3 --rotate-z 45 --scale 2 "
             "--log transform.log --verbose 0\n";
     }
@@ -66,11 +66,22 @@ namespace mesh_app {
 int main(int argc, char** argv) {
     using namespace mesh_app;
     using namespace mesh;
-
+    std::string filename;
     file::CObjFile objfile;
-
     if (argc < 3) {
-        PrintUsage();
+        if (argc >= 1) {
+            std::string fullPath = argv[0];
+            size_t pos = fullPath.find_last_of("/\\");
+            filename = (pos == std::string::npos) ? fullPath : fullPath.substr(pos + 1);
+            pos = filename.find_last_of(".");
+            filename = (pos == std::string::npos) ? filename : filename.substr(0, pos);
+            std::cout << "************************ " << filename << " ***************************" << std::endl;
+        }
+        PrintUsage(filename);
+
+        std::shared_ptr<file::CObjFile> obj_file = std::make_shared<file::CObjFile>();
+        obj_file->read("./input.obj");
+
         return 1;
     }
 
@@ -241,7 +252,7 @@ int main(int argc, char** argv) {
             }
             else {
                 std::cerr << "\n⚠️ Unknown or malformed option: " << arg << "\n";
-                PrintUsage();
+                PrintUsage(filename);
                 return 1;
             }
         }

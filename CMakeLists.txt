@@ -35,6 +35,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VS_DEBUGGER_COMMAND_ARGUMENTS  "input.obj output.obj --translate 0.5 0.5 0.5 --rotate-axis 1 1 1 45 --scale 2 --log transform.log --verbose 1"
+)
+
 #target_include_directories(${PROJECT_NAME} PRIVATE ${MESH_DIR})
 
 if (UNIX)

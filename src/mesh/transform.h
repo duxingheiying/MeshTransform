@@ -6,64 +6,71 @@
 #include <iostream>
 
 namespace linear_algebra {
-    // 三维向量
+    // 二维维向量
     struct Vector2 {
-        double x, y;
-		Vector2() : x(0), y(0) {}
-        Vector2(double _x, double _y) : x(_x), y(_y) {}
+        union {
+            double x_;
+            double u_;
+        };
+        union {
+            double y_;
+            double v_;
+        };
+		Vector2() : x_(0), y_(0) {}
+        Vector2(double x, double y) : x_(x), y_(y) {}
 
         Vector2 operator+(const Vector2& rhs) const {
-            return { x + rhs.x, y + rhs.y};
-        }
+            return { x_ + rhs.x_, y_ + rhs.y_};
+        } 
 
         Vector2 operator-(const Vector2& rhs) const {
-			return { x - rhs.x, y - rhs.y };
+			return { x_ - rhs.x_, y_ - rhs.y_ };
         }
 
-        // 二维向量放缩
-        Vector2 operator*(double s) const { return { x * s, y * s }; }
+        // scale vec2
+        Vector2 operator*(double s) const { return { x_ * s, y_ * s }; }
 
-        // 二维向量点成
-        double dot(const Vector3& rhs) const { return x * rhs.x + y * rhs.y; }
+        // vec2 dot
+        double dot(const Vector2& rhs) const { return x_ * rhs.x_ + y_ * rhs.y_; }
 
-        // 二维向量叉乘
+        // vec2 cross
         double cross(const Vector2& rhs) const {
-            return { this->x * rhs.y - this->y * rhs.x};
+            return { this->x_ * rhs.y_ - this->y_ * rhs.x_};
         }
 
         Vector2 normalized() const {
-            double len = std::sqrt(x * x + y * y);
+            double len = std::sqrt(std::pow( x_, 2) + std::pow(y_, 2));
             if (len < 1e-9) return { 0, 0};
-            return { x / len, y / len };
+            return { x_ / len, y_ / len };
         }
     };
 
     // 三维向量
     struct Vector3 {
-        double x, y, z;
-        Vector3() : x(0), y(0), z(0) {}
-        Vector3(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
+        double x_, y_, z_;
+        Vector3() : x_(0), y_(0), z_(0) {}
+        Vector3(double x, double y, double z) : x_(x), y_(y), z_(z) {}
 
         Vector3 operator+(const Vector3& rhs) const {
-            return { x + rhs.x, y + rhs.y, z + rhs.z };
+            return { x_ + rhs.x_, y_ + rhs.y_, z_ + rhs.z_ };
         }
 
         Vector3 operator-(const Vector3& rhs) const {
-            return { x - rhs.x, y - rhs.y, z - rhs.z };
+            return { x_ - rhs.x_, y_ - rhs.y_, z_ - rhs.z_ };
         }
 
-        Vector3 operator*(double s) const { return { x * s, y * s, z * s }; }
+        Vector3 operator*(double s) const { return { x_ * s, y_ * s, z_ * s }; }
 
-        double dot(const Vector3& rhs) const { return x * rhs.x + y * rhs.y + z * rhs.z; }
+        double dot(const Vector3& rhs) const { return x_ * rhs.x_ + y_ * rhs.y_ + z_ * rhs.z_; }
 
         Vector3 cross(const Vector3& rhs) const {
-            return { y * rhs.z - z * rhs.y, z * rhs.x - x * rhs.z, x * rhs.y - y * rhs.x };
+            return { y_ * rhs.z_ - z_ * rhs.y_, z_ * rhs.x_ - x_ * rhs.z_, x_ * rhs.y_ - y_ * rhs.x_ };
         }
 
         Vector3 normalized() const {
-            double len = std::sqrt(x * x + y * y + z * z);
+            double len = std::sqrt(x_ * x_ + y_ * y_ + z_ * z_);
             if (len < 1e-9) return { 0, 0, 0 };
-            return { x / len, y / len, z / len };
+            return { x_ / len, y_ / len, z_ / len };
         }
     };
 

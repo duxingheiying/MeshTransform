@@ -15,8 +15,13 @@ namespace file {
 		explicit CObjFile();
 
 	public:
+		// parse obj file into mesh
+		static bool read(const std::string& file_path, mesh::Mesh& mesh);
+		static bool saveOBJ(const std::string& file_path, const mesh::Mesh& mesh);
+
 		// 从简单 OBJ 文件读取 (仅 "v x y z")
 		bool read(const std::string& obj_file_path);
+
 		// 保存为简单 OBJ 文件
 		bool write(const std::string& obj_file_path) const;
 

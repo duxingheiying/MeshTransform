@@ -82,6 +82,12 @@ int main(int argc, char** argv) {
         std::shared_ptr<file::CObjFile> obj_file = std::make_shared<file::CObjFile>();
         obj_file->read("./input.obj");
 
+        std::shared_ptr<file::CObjFile> combine_obj_file = std::make_shared<file::CObjFile>();
+        combine_obj_file->read("./output.obj");
+
+        obj_file->mesh()->append(*combine_obj_file->mesh());
+        obj_file->write("./combine.obj");
+
         return 1;
     }
 

@@ -47,6 +47,32 @@ namespace file {
         return idx;
     }
 
+    /*static*/ std::string makeOBJIndex(const Index& idx) {
+        // OBJ 索引从 1 开始，内部 index 从 0 开始
+        auto to1 = [](int x) { return (x >= 0) ? (x + 1) : 0; };
+
+        bool hasVT = (idx.vt >= 0);
+        bool hasVN = (idx.vn >= 0);
+
+        std::ostringstream oss;
+        oss << to1(idx.v);
+
+        if (hasVT) {
+            oss << "/";
+            if (hasVT) oss << to1(idx.vt);
+        }
+
+        if (hasVN) {
+            if (!hasVT) {
+                oss << "/";
+            } 
+            oss << "/" << to1(idx.vn);
+        }
+
+        return oss.str();
+    }
+
+
 	CObjFile::CObjFile() {
         mesh_ = std::make_shared<mesh::Mesh>();
 	}
@@ -148,11 +174,11 @@ namespace file {
 				mesh::Face face;
 				std::string vertex;
 				while (iss >> vertex) {
-					// int v = 0, vt = 0, vn = 0;
-					// const int value = sscanf(vertex.c_str(), "%d/%d/%d", &v, &vt, &vn);
 					const Index& index = parseOBJIndex(vertex);
 					face.vIdx_.push_back(index.v);
+					//if (index.vt >= 0)
 					face.vtIdx_.push_back(index.vt);
+					//if (index.vn >= 0)
 					face.vnIdx_.push_back(index.vn);
 				}
 				mesh_->faces_.push_back(face);
@@ -184,6 +210,13 @@ namespace file {
         }
         for (const auto& vn : mesh_->normals_) {
             out << "vn " << vn.x_ << " " << vn.y_ << " " << vn.z_ << "\n";
+        }
+        for (const auto& face : mesh_->faces_) {
+            out << "f";
+            for (size_t i = 0; i < face.vIdx_.size(); ++i) {
+                out<<" "<< makeOBJIndex({face.vIdx_[i], face.vtIdx_[i], face.vnIdx_[i]});
+            }
+            out << "\n";
         }
         for (const auto& str : other_info_str_list_) {
             out << str << "\n";

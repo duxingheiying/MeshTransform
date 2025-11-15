@@ -13,13 +13,15 @@ namespace mesh {
 	// 简单网格类（仅支持顶点加载与保存）
 	class Mesh {
 	public:
-		Mesh() = default;
+		explicit Mesh() = default;
 
 		// 应用变换矩阵
 		void apply_transform(const linear_algebra::Matrix4x4& matrix);
 
 		// 获取顶点数组
 		const std::vector<linear_algebra::Vector3>& vertices() const { return vertices_; }
+
+		void append(const Mesh& other);
 
 	public:
 		std::vector<linear_algebra::Vector3> vertices_;
@@ -30,5 +32,6 @@ namespace mesh {
 	};
 
 }  // namespace mesh
+
 
 #endif  // MESH_MESH_H_
